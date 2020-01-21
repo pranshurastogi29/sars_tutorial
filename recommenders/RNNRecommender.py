@@ -126,7 +126,7 @@ class RNNRecommender(ISeqRecommender):
                 pred = self.model.predict_next_batch(np.array([self.pseudo_session_id]),
                                                      np.array([item]),
                                                      np.array([user_id]),
-                                                     batch=1)
+                                                     batch=1,load_from=load_from)
         # sort items by predicted score
         pred.sort_values(0, ascending=False, inplace=True)
         # increase the psuedo-session id so that future call to recommend() won't be connected
