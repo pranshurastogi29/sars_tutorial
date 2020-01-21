@@ -970,7 +970,7 @@ class HGRU4Rec:
         return avgc
 
     def predict_next_batch(self, session_ids, input_item_ids, input_user_ids,
-                           predict_for_item_ids=None, batch=100):
+                           predict_for_item_ids=None, batch=100,load_from=None):
         '''
         Gives predicton scores for a selected set of items. Can be used in batch mode to predict for multiple independent events (i.e. events of different sessions) at once and thus speed up evaluation.
 
@@ -997,6 +997,10 @@ class HGRU4Rec:
             Columns: events of the batch; rows: items. Rows are indexed by the item IDs.
 
         '''
+        if load_from:
+                logger.info('Resuming from state: {}'.format(load_from))
+                self.load_state(pickle.load(open(load_from, 'rb')))
+                
         if self.error_during_train: raise Exception
         if self.predict is None or self.predict_batch != batch:
             X, Y = T.ivectors(2)
