@@ -777,10 +777,6 @@ class HGRU4Rec:
         itemids = train_data[self.item_key].unique()
         self.n_items = len(itemids)
         self.init()  # initialize the network
-        if load_from:
-            logger.info('Resuming from state: {}'.format(load_from))
-            self.load_state(pickle.load(open(load_from, 'rb')))
-
         if not retrain:
             self.itemidmap = pd.Series(data=np.arange(self.n_items), index=itemids)
             train_data = pd.merge(train_data,
@@ -788,8 +784,15 @@ class HGRU4Rec:
                                   on=self.item_key, how='inner')
             user_indptr, offset_sessions = self.preprocess_data(train_data)
         else:
-            raise Exception('Not supported yet!')
-
+            if load_from:
+                logger.info('Resuming from state: {}'.format(load_from))
+                self.load_state(pickle.load(open(load_from, 'rb')))
+            self.itemidmap = pd.Series(data=np.arange(self.n_items), index=itemids)
+            train_data = pd.merge(train_data,
+                                  pd.DataFrame({self.item_key: itemids, 'ItemIdx': self.itemidmap[itemids].values}),
+                                  on=self.item_key, how='inner')
+            user_indptr, offset_sessions = self.preprocess_data(train_data)
+            
         if valid_data is not None:
             valid_data = pd.merge(valid_data,
                                   pd.DataFrame({self.item_key: itemids, 'ItemIdx': self.itemidmap[itemids].values}),
@@ -847,7 +850,7 @@ class HGRU4Rec:
                                        sample_alpha=self.sample_alpha,
                                        sample_store=sample_store)
         # Training starts here
-        best_valid, best_state = None, None
+        best_train, best_state = None, None
         my_patience = patience
         epoch = 0
         while epoch < self.n_epochs and my_patience > 0:
@@ -869,6 +872,9 @@ class HGRU4Rec:
                                                                                                valid_cost,
                                                                                                my_patience))
             else:
+                if best_train is None or train_cost < best_train:
+                    best_valid = train_cost
+                    best_state = self.save_state()
                 logger.info('Epoch {} - train cost: {:.4f}'.format(epoch, train_cost))
             epoch += 1
         if my_patience == 0:
