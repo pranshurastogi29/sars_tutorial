@@ -1,5 +1,5 @@
 import numpy as np
-import pickle as pkl
+import pickle
 from recommenders.ISeqRecommender import ISeqRecommender
 from util.data_utils import dataset_to_gru4rec_format
 from util.rnn.gru4rec import GRU4Rec
