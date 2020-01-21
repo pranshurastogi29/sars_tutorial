@@ -110,7 +110,7 @@ class RNNRecommender(ISeqRecommender):
                                   item_key='item_id',
                                   time_key='ts')
         self.logger.info('Training started')
-        self.model.fit(train_data, save_to=None, load_from=None)
+        self.model.fit(train_data, save_to=save_to, load_from=load_from)
         self.logger.info('Training completed')
 
     def recommend(self, user_profile, user_id=None):
