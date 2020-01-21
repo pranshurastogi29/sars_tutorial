@@ -777,6 +777,10 @@ class HGRU4Rec:
         itemids = train_data[self.item_key].unique()
         self.n_items = len(itemids)
         self.init()  # initialize the network
+        
+        if load_from:
+                logger.info('Resuming from state: {}'.format(load_from))
+                self.load_state(pickle.load(open(load_from, 'rb')))
         if not retrain:
             self.itemidmap = pd.Series(data=np.arange(self.n_items), index=itemids)
             train_data = pd.merge(train_data,
@@ -784,9 +788,6 @@ class HGRU4Rec:
                                   on=self.item_key, how='inner')
             user_indptr, offset_sessions = self.preprocess_data(train_data)
         else:
-            if load_from:
-                logger.info('Resuming from state: {}'.format(load_from))
-                self.load_state(pickle.load(open(load_from, 'rb')))
             self.itemidmap = pd.Series(data=np.arange(self.n_items), index=itemids)
             train_data = pd.merge(train_data,
                                   pd.DataFrame({self.item_key: itemids, 'ItemIdx': self.itemidmap[itemids].values}),
