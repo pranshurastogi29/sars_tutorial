@@ -72,7 +72,7 @@ class RNNRecommender(ISeqRecommender):
                'personalized={personalized}, ' \
                ')'.format(**self.__dict__)
 
-    def fit(self, train_data, load_from=None, save_to=None):
+    def fit(self, train_data, save_to=None, load_from=None):
         self.logger.info('Converting training data to GRU4Rec format')
         # parse training data to GRU4Rec format
         train_data = dataset_to_gru4rec_format(dataset=train_data)
@@ -110,7 +110,7 @@ class RNNRecommender(ISeqRecommender):
                                   item_key='item_id',
                                   time_key='ts')
         self.logger.info('Training started')
-        self.model.fit(train_data, load_from=None, save_to=None)
+        self.model.fit(train_data, save_to=None, load_from=None)
         self.logger.info('Training completed')
 
     def recommend(self, user_profile, user_id=None):
