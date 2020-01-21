@@ -875,8 +875,6 @@ class HGRU4Rec:
                 if best_train is None or train_cost < best_train:
                     best_train = train_cost
                     best_state = self.save_state()
-                    logger.info('Saving model to: {}'.format(save_to))
-                    pickle.dump(best_state, open(save_to, 'wb'), pickle.HIGHEST_PROTOCOL)
                 logger.info('Epoch {} - train cost: {:.4f}'.format(epoch, train_cost))
             epoch += 1
         if my_patience == 0:
