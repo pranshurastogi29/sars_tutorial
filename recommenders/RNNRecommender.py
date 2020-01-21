@@ -114,8 +114,6 @@ class RNNRecommender(ISeqRecommender):
         self.logger.info('Training completed')
 
     def recommend(self, user_profile, user_id=None, load_from=None):
-        if load_from:
-                self.model.load_state(pickle.load(open(load_from, 'rb')))
         if not self.personalized:
             for item in user_profile:
                 pred = self.model.predict_next_batch(np.array([self.pseudo_session_id]),
