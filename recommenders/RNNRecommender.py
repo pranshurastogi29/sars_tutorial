@@ -113,7 +113,7 @@ class RNNRecommender(ISeqRecommender):
         self.model.fit(train_data, save_to=save_to, load_from=load_from)
         self.logger.info('Training completed')
 
-    def recommend(self, user_profile, user_id=None, load_from=None):
+    def recommend(self, user_profile, user_id=None):
         if not self.personalized:
             for item in user_profile:
                 pred = self.model.predict_next_batch(np.array([self.pseudo_session_id]),
@@ -126,7 +126,7 @@ class RNNRecommender(ISeqRecommender):
                 pred = self.model.predict_next_batch(np.array([self.pseudo_session_id]),
                                                      np.array([item]),
                                                      np.array([user_id]),
-                                                     batch=1,load_from=load_from)
+                                                     batch=1)
         # sort items by predicted score
         pred.sort_values(0, ascending=False, inplace=True)
         # increase the psuedo-session id so that future call to recommend() won't be connected
