@@ -34,10 +34,13 @@ def sequential_evaluation(recommender,
     metrics = np.zeros(len(evaluation_functions))
     with tqdm(total=len(test_sequences)) as pbar:
         for i, test_seq in enumerate(test_sequences):
-            if users is not None:
+            try:
+              if users is not None:
                 user = users[i]
+            except:
+                user = users
             else:
-                user = None
+              user = None
             if scroll:
                 metrics += sequence_sequential_evaluation(recommender,
                                                           test_seq,
